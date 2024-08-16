@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { margin: 5px; padding: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Student Management</h1>
+
+    <!-- Form to Add Student -->
+    <div>
+        <h2>Add Student</h2>
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="number" id="age" placeholder="Age" required>
+        <input type="text" id="branch" placeholder="Branch" required>
+        <button onclick="addStudent()">Add Student</button>
+    </div>
+
+    <!-- List All Students -->
+    <div>
+        <h2>All Students</h2>
+        <button onclick="getAllStudents()">Refresh List</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>RollNo</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Branch</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="studentTable">
+                <!-- Student rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
