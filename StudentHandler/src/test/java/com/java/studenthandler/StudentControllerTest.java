@@ -72,7 +72,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void getAllStudents_failure() throws Exception {
+    public void getAllStudents_failure()  {
         Mockito.when(studentRepository.findAll()).thenReturn(Collections.emptyList());
 
         var exp = Assertions.assertThrows(StudentListEmptyException.class, () -> {

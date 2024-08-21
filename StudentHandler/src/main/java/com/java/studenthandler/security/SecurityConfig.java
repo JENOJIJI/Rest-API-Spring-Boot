@@ -1,52 +1,42 @@
 package com.java.studenthandler.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/students").permitAll()
-                        .anyRequest().authenticated()
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF as we're using JWT
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Set session management to stateless
                 )
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Set session management to stateless
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .requestMatchers("/register", "/authenticate").permitAll() // Allow access to registration and authentication endpoints
+                                .requestMatchers("/students/**").authenticated() // Protect student management endpoints
+                                .anyRequest().authenticated() // Protect any other endpoint by default
                 )
-                .csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(withDefaults());
+                .authenticationProvider(authenticationProvider) // Set the authentication provider
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter before UsernamePasswordAuthenticationFilter
+
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user1 = User.withUsername("user")
-                .password("{noop}user@123")
-                .roles("USER")
-                .build();
-
-        UserDetails admin1 = User.withUsername("admin")
-                .password("{noop}admin@123")
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user1, admin1);
-    }
 }
