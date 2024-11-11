@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+
 public class StudentController {
 
 
@@ -22,6 +23,16 @@ public class StudentController {
     @Autowired
     StudentController(StudentRepository repo) {
         this.repo = repo;
+    }
+
+    @GetMapping("/index")
+    public  String renderIndex(){
+        return "index";
+    }
+
+    @GetMapping("/home")
+    public  String renderHome(){
+        return "homepage";
     }
 
     @GetMapping("/students")

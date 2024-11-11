@@ -29,7 +29,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/register", "/authenticate").permitAll() // Allow access to registration and authentication endpoints
+                                .requestMatchers("/index","/home","/register", "/authenticate").permitAll() // Allow access to registration and authentication endpoints
                                 .requestMatchers("/students/**").authenticated() // Protect student management endpoints
                                 .anyRequest().authenticated() // Protect any other endpoint by default
                 )
